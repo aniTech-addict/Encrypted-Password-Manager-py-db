@@ -1,41 +1,66 @@
 import re
 
 # Encryption Psw
-encrypt_key = input("Please enter your password: ")
+def main():
+    masterPassword = input("Please enter your password: ")
+    while len(masterPassword) >15 or len(masterPassword) <6:
+        print("Password must be between 15 and 6 characters")
+        masterKey = input("Please enter your password: ")
 
-def add_psw(username,psw):
+        while True:
+
+            operation = int(input("Please enter your operation:  \n"
+                                  "1: View Password \n"
+                                  "2: Add New Password \n"
+                                  "3: Quit\n"))
+
+            if operation == 1:
+                view_psw(masterKey)
+
+
+            elif operation == 2:
+                username = input("Enter Username: ")
+                psw = input("Enter Password: ")
+
+                add_psw(username, psw,masterKey)
+
+            elif operation == 3:
+                print('Exiting Psw Manger')
+                return
+
+            else:
+                print("Invalid Operation")
+
+
+def xor_encrypt_decrypt(raw_psw, key):
+    encrypted_chars=[]
+    for i in range(len(raw_psw)):
+        char = raw_psw[i]
+        key_char = key[i % len(key)]
+        encrypted_chars.append(chr(ord(char) ^ ord(key_char)))
+
+    encrypted_psw = "".join(encrypted_chars)
+    return encrypted_psw
+
+
+
+def add_psw(acc_name,password,masterKey):
+    encrypted_password = xor_encrypt_decrypt(password,masterKey)
+
     with open("psw.txt","a") as file:
-        file.write(username + ":" + psw + "\n")
+        file.write(acc_name + ":" + encrypted_password + "\n")
         return
 
-def view_psw():
+def view_psw(masterKey):
     with open("psw.txt","r") as file:
         for line in file:
-            username,psw = line.split(":")
-            print(f"Username: {username} \nPassword: {psw}")
+
+            userName,psw = line.split(":")
+            psw= xor_encrypt_decrypt(psw,masterKey)
+            print(f"Username: {userName} \nPassword: {psw}")
 
 
 
-while True:
 
-    operation = int(input("Please enter your operation:  \n"
-                          "1: View Password \n"
-                          "2: Add New Password \n"
-                          "3: Quit\n"))
-
-    if operation == 1:
-        view_psw()
-
-
-    elif operation == 2:
-        username = input("Enter Username: ")
-        psw = input("Enter Password: ")
-
-        add_psw(username,psw)
-
-    elif operation == 3:
-        print('Exiting Psw Manger')
-        break
-
-    else:
-        print("Invalid Operation")
+if __name__ == "__main__":
+    main()
