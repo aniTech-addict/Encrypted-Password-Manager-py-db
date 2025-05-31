@@ -1,8 +1,19 @@
 import re
 
-# Encryption Psw
+
 def main():
-    masterPassword = input("Please enter your password: ")
+    """
+    Main function to run the password manager.
+
+    This function prompts the user for a Master Password,
+    Enters the infinite Loop if the password is of invalid len until valid.
+
+    Prompts the user to enter their operation.
+
+    """
+    
+    masterPassword = input("Please enter your password: ") # Encryption Key 
+    
     while len(masterPassword) >15 or len(masterPassword) <6:
         print("Password must be between 15 and 6 characters")
         masterKey = input("Please enter your password: ")
@@ -33,6 +44,17 @@ def main():
 
 
 def xor_encrypt_decrypt(raw_psw, key):
+    """
+    Encrypts or decrypts a password using the XOR cipher.
+
+    This function iterates through each character of the raw password, XORs it with a character from the key,
+    and concatenates the resulting characters to form the encrypted/decrypted password.
+
+    :param raw_psw: The password to be encrypted or decrypted (string).
+    :param key: The encryption/decryption key (string).
+    :return: The encrypted or decrypted password (string).
+
+    """
     encrypted_chars=[]
     for i in range(len(raw_psw)):
         char = raw_psw[i]
@@ -43,7 +65,17 @@ def xor_encrypt_decrypt(raw_psw, key):
     return encrypted_psw
 
 
-
+"""
+Functions to handle password operations:
+    1. Add a new password.
+    2. View existing passwords.
+    3. Quit the application.
+    
+    Parameters:
+    - acc_name: The account name for the password (string).
+    - password: The password to be encrypted and stored (string).
+    - masterKey: The encryption/decryption key (string).
+"""
 def add_psw(acc_name,password,masterKey):
     encrypted_password = xor_encrypt_decrypt(password,masterKey)
 
