@@ -8,42 +8,19 @@ def main():
     This function prompts the user for a Master Password,
     Enters the infinite Loop if the password is of invalid len until valid.
 
-    Prompts the user to enter their operation.
+    Calls operation_index function that prompts for user input and handles operation_indexs as per req
 
     """
-    
-    masterPassword = input("Please enter your password: ") # Encryption Key 
-    
-    while len(masterPassword) >15 or len(masterPassword) <6:
+    master_key = input("Please enter your password: ") # Encryption Key
+    while not 6<= len(master_key) <=15:
         print("Password must be between 15 and 6 characters")
-        masterKey = input("Please enter your password: ")
+        master_key = input("Please enter your password: ")
 
-        while True:
-
-            operation = int(input("Please enter your operation:  \n"
-                                  "1: View Password \n"
-                                  "2: Add New Password \n"
-                                  "3: Quit\n"))
-
-            if operation == 1:
-                view_psw(masterKey)
+    handle_operations(master_key)
 
 
-            elif operation == 2:
-                username = input("Enter Username: ")
-                psw = input("Enter Password: ")
 
-                add_psw(username, psw,masterKey)
-
-            elif operation == 3:
-                print('Exiting Psw Manger')
-                return
-
-            else:
-                print("Invalid Operation")
-
-
-def xor_encrypt_decrypt(raw_psw, key):
+def xor_encrypt_decrypt(raw_psw, master_key):
     """
     Encrypts or decrypts a password using the XOR cipher.
 
@@ -51,45 +28,98 @@ def xor_encrypt_decrypt(raw_psw, key):
     and concatenates the resulting characters to form the encrypted/decrypted password.
 
     :param raw_psw: The password to be encrypted or decrypted (string).
-    :param key: The encryption/decryption key (string).
+    :param master_key: The encryption/decryption key (string).
     :return: The encrypted or decrypted password (string).
 
     """
     encrypted_chars=[]
     for i in range(len(raw_psw)):
         char = raw_psw[i]
-        key_char = key[i % len(key)]
+        key_char = master_key[i % len(master_key)]
         encrypted_chars.append(chr(ord(char) ^ ord(key_char)))
 
     encrypted_psw = "".join(encrypted_chars)
     return encrypted_psw
 
 
+def handle_operations(master_key):
+    while True:
+
+        operation_index = int(input("Please enter your operation_index:  \n"
+                                  "1: View Password \n"
+                                  "2: Add New Password \n"
+                                  "3: Search Password\n"
+                                  "4: Quit"))
+
+
+
+        if operation_index == 1:
+            view_psw(master_key)
+
+
+        elif operation_index == 2:
+            username = input("Enter Username: ")
+            raw_psw = input("Enter Password: ")
+
+            add_password(username, raw_psw,master_key)
+
+        elif operation_index == 3:
+            search_psw(master_key)
+
+        elif operation_index == 4:
+            print('-----------------\nExiting Password Manger\n------------------')
+            return
+
+        else:
+            print("Invalid operation_index")
+
+
 """
-Functions to handle password operations:
+Functions to handle password operation_indexs:
     1. Add a new password.
     2. View existing passwords.
-    3. Quit the application.
+    3. Search for a password by account name.
+    
     
     Parameters:
     - acc_name: The account name for the password (string).
     - password: The password to be encrypted and stored (string).
-    - masterKey: The encryption/decryption key (string).
+    - master_key: The encryption/decryption key (string).
 """
-def add_psw(acc_name,password,masterKey):
-    encrypted_password = xor_encrypt_decrypt(password,masterKey)
+def add_password(acc_name,raw_password,master_key):
+    encrypted_password = xor_encrypt_decrypt(raw_password,master_key)
 
     with open("psw.txt","a") as file:
         file.write(acc_name + ":" + encrypted_password + "\n")
-        return
 
-def view_psw(masterKey):
+
+def view_psw(master_key):
     with open("psw.txt","r") as file:
         for line in file:
 
-            userName,psw = line.split(":")
-            psw= xor_encrypt_decrypt(psw,masterKey)
-            print(f"Username: {userName} \nPassword: {psw}")
+            username,encrypted_password = line.split(":",1)
+
+            decrypted_password= xor_encrypt_decrypt(encrypted_password.strip(), master_key)
+            print(f"Username: {username} \nPassword: {decrypted_password}")
+
+def search_psw(master_key):
+
+    search_pattern = input("Enter the account name to search: ")
+    found = False
+
+    with open("psw.txt","r") as file:
+        for line in file:
+            username,encrypted_password = line.split(":",1)
+
+            if re.search(search_pattern,username):
+                decrypted_password = xor_encrypt_decrypt(encrypted_password.strip(),master_key)
+                print(f"Username: {username} \nPassword: {decrypted_password}")
+
+                found = True
+
+        if not found:
+            print("No matching account found.")
+
 
 
 
