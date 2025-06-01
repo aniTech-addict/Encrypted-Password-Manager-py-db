@@ -24,9 +24,34 @@ class PasswordManager :
             '''
         )
 
-
         conn.commit()
-        conn.close
+        conn.close()
+        
+
+# Operational Methods 
+        
+    def view_passwords(self):
+        """
+        Connects to the database, fetches all username and encrypted password pairs from the 'passwords' table,
+        decrypts each password using the master key
+        prints them to the console.
+        
+        """
+        conn = self.connect()
+        cursor = conn.cursor()
+        
+        cursor.execute('SELECT username,password FROM passwords')
+        rows = cursor.fetchall()
+        
+        for username,encrypted_password in rows:
+            password = xor_encrypt_decrypt(encrypted_password.strip(),self.master_key)
+            print(f"Username: {username}\n Password: {password}\n")
+        
+        toContinue = input()
+        
+        conn.close()
+        
+        
     def add_password(self,acc_name, password):
         encrypted_password = xor_encrypt_decrypt(password,self.master_key)
 
@@ -38,6 +63,29 @@ class PasswordManager :
         conn.commit()
         conn.close()
         print("Password Saved")
+        toContinue = input()
+        
+    def search_password(self,acc_name):
+        conn = self.connect()
+        cursor = conn.cursor()
+        
+        cursor.execute('SELECT username,password FROM passwords WHERE username LIKE ?',(f"%{acc_name}%",))
+        
+        rows = cursor.fetchall()
+        if rows == []:
+            print("No Such Username Found")
+            
+        
+        for username,encrypted_password in rows:
+            password = xor_encrypt_decrypt(encrypted_password.strip(),self.master_key)
+            
+            print(f"    Username: {username}\n  Password: {password}\n")
+        
+        to_continue = input()    
+            
+        conn.close()
+        
+    
 
 
 
