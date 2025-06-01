@@ -40,9 +40,7 @@ You’ll learn how to:
 git clone https://github.com/your-username/your-repo-name.git
 cd your-repo-name
 2. (Optional) Create a Virtual Environment
-bash
-Copy
-Edit
+-  bash
 python -m venv venv
 # Windows
 venv\Scripts\activate
@@ -51,18 +49,15 @@ source venv/bin/activate
 3. Install Requirements
 There’s only one external library (if you extract XOR to its own file, otherwise it’s pure stdlib):
 
-bash
-Copy
-Edit
+- bash
+
 pip install -r requirements.txt
 Note: If you only use built-in sqlite3 and custom XOR, you might not need any dependencies.
 
 ⚙️ Usage
 Run the app:
 
-bash
-Copy
-Edit
+- bash
 python main.py
 Enter Master Key:
 
@@ -92,8 +87,6 @@ Option 4 closes the app.
 
 📁 Project Structure
 vbnet
-Copy
-Edit
 .
 ├── main.py              # CLI interface + input validation
 ├── manager.py           # PasswordManager class (DB logic + XOR calls)
@@ -141,9 +134,8 @@ Check that your master key matches what you used when adding entries.
 
 Use an absolute path in main.py to lock down where passwords.db is created:
 
-python
-Copy
-Edit
+- python
+
 import os
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.join(BASE_DIR, "passwords.db")
