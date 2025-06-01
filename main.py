@@ -1,4 +1,7 @@
+from manager import PasswordManager
 import re
+
+import sqlite3
 
 
 def main():
@@ -11,35 +14,17 @@ def main():
     Calls operation_index function that prompts for user input and handles operation_indexs as per req
 
     """
+
     master_key = input("Please enter your password: ") # Encryption Key
     while not 6<= len(master_key) <=15:
         print("Password must be between 15 and 6 characters")
         master_key = input("Please enter your password: ")
 
-    handle_operations(master_key)
-
-
-
-def xor_encrypt_decrypt(raw_psw, master_key):
-    """
-    Encrypts or decrypts a password using the XOR cipher.
-
-    This function iterates through each character of the raw password, XORs it with a character from the key,
-    and concatenates the resulting characters to form the encrypted/decrypted password.
-
-    :param raw_psw: The password to be encrypted or decrypted (string).
-    :param master_key: The encryption/decryption key (string).
-    :return: The encrypted or decrypted password (string).
-
-    """
-    encrypted_chars=[]
-    for i in range(len(raw_psw)):
-        char = raw_psw[i]
-        key_char = master_key[i % len(master_key)]
-        encrypted_chars.append(chr(ord(char) ^ ord(key_char)))
-
-    encrypted_psw = "".join(encrypted_chars)
-    return encrypted_psw
+    # handle_operations(master_key)
+    
+    # Creating DB
+    pm = PasswordManager("passwords.db", master_key)
+    pm.add_password("Netflix","psw_123")
 
 
 def handle_operations(master_key):
@@ -74,6 +59,27 @@ def handle_operations(master_key):
             print("Invalid operation_index")
 
 
+def xor_encrypt_decrypt(raw_psw, master_key):
+    """
+    Encrypts or decrypts a password using the XOR cipher.
+
+    This function iterates through each character of the raw password, XORs it with a character from the key,
+    and concatenates the resulting characters to form the encrypted/decrypted password.
+
+    :param raw_psw: The password to be encrypted or decrypted (string).
+    :param master_key: The encryption/decryption key (string).
+    :return: The encrypted or decrypted password (string).
+
+    """
+    encrypted_chars=[]
+    for i in range(len(raw_psw)):
+        char = raw_psw[i]
+        key_char = master_key[i % len(master_key)]
+        encrypted_chars.append(chr(ord(char) ^ ord(key_char)))
+
+    encrypted_psw = "".join(encrypted_chars)
+    return encrypted_psw
+
 """
 Functions to handle password operation_indexs:
     1. Add a new password.
@@ -86,6 +92,7 @@ Functions to handle password operation_indexs:
     - password: The password to be encrypted and stored (string).
     - master_key: The encryption/decryption key (string).
 """
+
 def add_password(acc_name,raw_password,master_key):
     encrypted_password = xor_encrypt_decrypt(raw_password,master_key)
 
@@ -119,9 +126,6 @@ def search_psw(master_key):
 
         if not found:
             print("No matching account found.")
-
-
-
 
 
 if __name__ == "__main__":
