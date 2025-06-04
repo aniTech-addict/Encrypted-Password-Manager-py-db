@@ -1,5 +1,8 @@
+import random
 import sqlite3
 from encryption_handler  import xor_encrypt_decrypt
+import string
+import random
 
 class PasswordManager :
     def __init__(self, db_name , master_key):
@@ -84,10 +87,40 @@ class PasswordManager :
         to_continue = input()    
             
         conn.close()
-        
     
+    def generate_random_password(self):
+        
+        MAX_PASSOWRD_LEN = 20
+        
+        special_characters = ["@","#","&","!"]
+        digits = string.digits
+        upper_case = string.ascii_uppercase
+        lower_case = string.ascii_lowercase
+        
+        password_map = [special_characters, digits, upper_case, lower_case]
+        
+        for_diversity = [random.choice(digits),
+                         random.choice(upper_case),
+                         random.choice(lower_case),
+                         random.choice(special_characters)]
+
+        huh = [random.choice(random.choice(password_map)) for _ in range(MAX_PASSOWRD_LEN-len(for_diversity))]
+        for_diversity.extend(huh)
+        random.shuffle(for_diversity)
+        generated_password = "".join(for_diversity)
+        print(generated_password)
+        
+        use_genrated_password = input("Use this genrated password ?? (y/n)")
+        if use_genrated_password == "y":
+            username = input("Enter your Username")
+            self.add_password(username,generated_password)
+        
+        
+        
+        
+        
+                
+            
 
 
-
-
-
+# %%
