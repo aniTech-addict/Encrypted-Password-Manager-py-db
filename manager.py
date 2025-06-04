@@ -90,7 +90,7 @@ class PasswordManager :
     
     def generate_random_password(self):
         
-        MAX_PASSOWRD_LEN = 20
+        MAX_PASSOWRD_LEN = 22
         
         special_characters = ["@","#","&","!"]
         digits = string.digits
